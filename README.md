@@ -32,6 +32,8 @@ Before you can run it you'll need to do a few things:
 
 In this screencast, I'll demonstrate `run-react-native` in action.
 
+![Screencast of run-react-native being used in a terminal window](./cast.gif?raw=true "Screencast of run-react-native being used in a terminal window")
+
 ### tl;dw
 
 After the packager and emulator start:
