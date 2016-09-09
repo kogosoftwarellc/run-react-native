@@ -1,4 +1,4 @@
-# run-react-native [![NPM version][npm-image]][npm-url] [![Downloads][downloads-image]][npm-url] [![Gitter chat][gitter-image]][gitter-url]
+# [React is awesome!][react-image] run-react-native [![NPM version][npm-image]][npm-url] [![Downloads][downloads-image]][npm-url] [![Gitter chat][gitter-image]][gitter-url]
 > Simplify react-native development
 
 If you've worked with `react-native` then you know how tedious it is to:
@@ -32,7 +32,7 @@ Before you can run it you'll need to do a few things:
 
 In this screencast, I'll demonstrate `run-react-native` in action.
 
-![Screencast of run-react-native being used in a terminal window](./cast.gif?raw=true "Screencast of run-react-native being used in a terminal window")
+![Screencast of run-react-native being used in a terminal window][screencast-image]
 
 ### tl;dw
 
@@ -83,3 +83,5 @@ THE SOFTWARE.
 
 [gitter-url]: https://gitter.im/kogosoftwarellc/run-react-native
 [gitter-image]: https://badges.gitter.im/kogosoftwarellc/run-react-native.png
+[screencast-image]: ./cast.gif?raw=true "Screencast of run-react-native being used in a terminal window"
+[react-image]: ./react-logo.png "React is awesome!"
