@@ -1,0 +1,163 @@
+#!/bin/bash
+#
+# Program Name:
+#
+# run-react-native
+#
+# License:
+#
+# The MIT License (MIT)
+#
+# Copyright (c) 2016 Kogo Software LLC
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy of
+# this software and associated documentation files (the "Software"), to deal in the
+# Software without restriction, including without limitation the rights to use,
+# copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the
+# Software, and to permit persons to whom the Software is furnished to do so,
+# subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+# FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+# COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
+# AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+function log() {
+  echo ''
+  echo "$1"
+  echo ''
+}
+
+if [[ ! -d android ]]; then
+  echo 'Expected to see an android directory in the CWD!  cd to your project root...' >&2
+  exit 1
+fi
+
+if [[ ! -f android/app/src/main/AndroidManifest.xml ]]; then
+  echo 'AndroidManifest.xml was not found under android/app/src/main/' >&2
+  exit 1
+fi
+
+packageName="`cat ./android/app/src/main/AndroidManifest.xml | \
+  tr '\n' ' ' | \
+  tr '\r' ' ' | \
+  sed 's|^\([^>]\+\).\+|\1|' | \
+  sed 's|.\+package="\([^"]\+\)".\+|\1|'`"
+
+log "The package defined in AndroidManifest.xml is '$packageName'.  \
+If this is not correct, please submit an issue at https://github.com/kogosoftwarellc/run-react-native"
+
+if [[ -f .babelrc ]]; then
+  echo '.babelrc was found int the current working directory!'
+  echo 'Normally you should remove it before starting the react-native packager.'
+  read -p 'Would you like to remove it now? (y/n):' answer
+  if [[ "$answer" == 'y' ]]; then
+    rm .babelrc
+  else
+    echo 'Leaving .babelrc in place.  May the force be with you...'
+  fi
+fi
+
+
+
+function assertAVDEnvVar() {
+  if [[ -z "$RUN_REACT_NATIVE_ANDROID_AVD" ]]; then
+    echo 'You need to set RUN_REACT_NATIVE_ANDROID_AVD in your environment!' >&2
+    echo 'e.g. `export RUN_REACT_NATIVE_ANDROID_AVD=my-avd-name`' >&2
+    exit 1
+  fi
+}
+
+log 'Starting adb...'
+
+adb start-server
+
+log 'Running the packager...'
+npm run react-native-run-packager &
+PACKAGER_PID=$!
+
+assertAVDEnvVar && {
+  log 'Running the emulator...'
+  emulator @$RUN_REACT_NATIVE_ANDROID_AVD &
+  EMULATOR_PID=$!
+
+  log 'Waiting 15 seconds for the emulator to start...'
+  # give the emulator some time to start
+  sleep 15
+
+  echo ''
+  echo 'Installing the app on the emulator...'
+  echo ''
+  react-native run-android
+}
+
+# child processes of
+function cOf() {
+  ps --ppid $1 -o pid --no-headers
+}
+
+function killEmulator() {
+  kill `cOf $EMULATOR_PID` $EMULATOR_PID
+  return 0
+}
+
+function killPackager() {
+  kill `cOf $PACKAGER_PID` 2>/dev/null
+  return 0
+}
+
+#trap "ps && \
+#  kill $EMULATOR_PID $PACKAGER_PID \
+#  " EXIT SIGINT SIGKILL
+
+function cmdHelp() {
+cat <<!
+
+The following commands are available:
+
+  * h, help - Prints this menu to stdout.
+  * ke      - Kills the emulator.
+  * ra      - Reinstalls the apk on the emulator.
+  * rap     - Reloads the app on the emulator.
+  * re      - Reloads the emulator.
+  * rp      - Reloads the packager.
+
+To exit type CTRL-C
+
+!
+}
+
+log 'Listening for input.  Type h or help for more info.'
+
+while read cmd
+do
+  case $cmd in
+    h|help)cmdHelp;;
+    ke)
+      killEmulator
+      EMULATOR_PID=''
+      ;;
+    ra)react-native run-android;;
+    rap)adb shell am start -S -n $packageName/.MainActivity;;
+    re)
+      killEmulator
+      emulator @$RUN_REACT_NATIVE_ANDROID_AVD &
+      EMULATOR_PID=$!
+      ;;
+    rp)
+      killPackager
+      npm run react-native-run-packager &
+      PACKAGER_PID=$!
+      ;;
+    *)
+      echo ''
+      echo Unkonwn command
+      cmdHelp
+      ;;
+  esac
+done
