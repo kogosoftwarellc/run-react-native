@@ -1,6 +1,6 @@
 {
   "name": "run-react-native",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Simplify react-native development",
   "bin": {
     "run-react-native": "./bin/run-react-native"
