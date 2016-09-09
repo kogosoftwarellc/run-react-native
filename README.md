@@ -1,5 +1,7 @@
-# [React is awesome!][react-image] run-react-native [![NPM version][npm-image]][npm-url] [![Downloads][downloads-image]][npm-url] [![Gitter chat][gitter-image]][gitter-url]
+# run-react-native [![NPM version][npm-image]][npm-url] [![Downloads][downloads-image]][npm-url] [![Gitter chat][gitter-image]][gitter-url]
 > Simplify react-native development
+
+![run-react-native][react-image]
 
 If you've worked with `react-native` then you know how tedious it is to:
 
