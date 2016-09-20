@@ -78,7 +78,7 @@ log 'Starting adb...'
 adb start-server
 
 log 'Running the packager...'
-npm run react-native-run-packager &
+react-native start --reset-cache &
 PACKAGER_PID=$!
 
 assertAVDEnvVar && {
