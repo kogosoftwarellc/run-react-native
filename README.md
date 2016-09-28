@@ -47,6 +47,7 @@ After the packager and emulator start:
   * rap     - Reloads the app on the emulator.
   * re      - Reloads the emulator.
   * rp      - Reloads the packager.
+  * ud      - Updated the device time to match system time.  Run this when you see warnings during debug sessions in chrome about the time being out of sync.
 * Pressing `CTRL-C` exits the process and all child processes are killed.
 
 ## TODO
