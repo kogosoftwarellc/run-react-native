@@ -126,6 +126,7 @@ The following commands are available:
   * rap     - Reloads the app on the emulator.
   * re      - Reloads the emulator.
   * rp      - Reloads the packager.
+  * ud      - Updated the device time to match system time.  Run this when you see warnings during debug sessions in chrome about the time being out of sync.
 
 To exit type CTRL-C
 
@@ -153,6 +154,9 @@ do
       killPackager
       npm run react-native-run-packager &
       PACKAGER_PID=$!
+      ;;
+    ud)
+      adb shell "date `date +%m%d%H%M%Y.%S`"
       ;;
     *)
       echo ''
