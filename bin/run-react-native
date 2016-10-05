@@ -128,7 +128,7 @@ The following commands are available:
   * rap     - Reloads the app on the emulator.
   * re      - Reloads the emulator.
   * rp      - Reloads the packager.
-  * ud      - Updated the device time to match system time.  Run this when you see warnings during debug sessions in chrome about the time being out of sync.
+  * ud      - Updates the device time to match system time.  Run this when you see warnings during debug sessions in chrome about the time being out of sync.
   * version - Displays the version of run-react-native.
 
 To exit type CTRL-C
