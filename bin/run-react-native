@@ -27,6 +27,10 @@
 # AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+pathToScript="$(dirname $0)/$(node -e "process.stdout.write(require('fs').readlinkSync('$0'))")"
+projectDir="$(dirname $(dirname "$pathToScript"))"
+packageJson="$projectDir/package.json"
+
 function log() {
   echo ''
   echo "$1"
@@ -62,8 +66,6 @@ if [[ -f .babelrc ]]; then
     echo 'Leaving .babelrc in place.  May the force be with you...'
   fi
 fi
-
-
 
 function assertAVDEnvVar() {
   if [[ -z "$RUN_REACT_NATIVE_ANDROID_AVD" ]]; then
@@ -127,6 +129,7 @@ The following commands are available:
   * re      - Reloads the emulator.
   * rp      - Reloads the packager.
   * ud      - Updated the device time to match system time.  Run this when you see warnings during debug sessions in chrome about the time being out of sync.
+  * version - Displays the version of run-react-native.
 
 To exit type CTRL-C
 
@@ -157,6 +160,13 @@ do
       ;;
     ud)
       adb shell "date `date +%m%d%H%M%Y.%S`"
+      ;;
+    version)
+      cat <<~
+
+  run-react-native version is: $(node -e "process.stdout.write(require('$packageJson').version)")
+
+~
       ;;
     *)
       echo ''
